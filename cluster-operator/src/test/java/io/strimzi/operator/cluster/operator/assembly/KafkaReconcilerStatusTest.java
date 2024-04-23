@@ -415,6 +415,7 @@ public class KafkaReconcilerStatusTest {
             // Check listener status
             assertThat(status.getListeners().size(), is(1));
             assertThat(status.getListeners().get(0).getName(), is("external"));
+            assertThat(status.getListeners().get(0).getType(), is("external"));
             assertThat(status.getListeners().get(0).getBootstrapServers(), is("5.124.16.8:31234,50.35.18.119:31234,55.36.78.115:31234"));
             assertThat(status.getListeners().get(0).getAddresses().size(), is(3));
 
@@ -519,6 +520,7 @@ public class KafkaReconcilerStatusTest {
             // Check listener status
             assertThat(status.getListeners().size(), is(1));
             assertThat(status.getListeners().get(0).getName(), is("external"));
+            assertThat(status.getListeners().get(0).getType(), is("external"));
             assertThat(status.getListeners().get(0).getBootstrapServers(), is("5.124.16.8:31234,my-address-0:31234,my-address-1:31234"));
             assertThat(status.getListeners().get(0).getAddresses().size(), is(3));
 
@@ -613,6 +615,7 @@ public class KafkaReconcilerStatusTest {
             // Check listener status
             assertThat(status.getListeners().size(), is(1));
             assertThat(status.getListeners().get(0).getName(), is("external"));
+            assertThat(status.getListeners().get(0).getType(), is("external"));
             assertThat(status.getListeners().get(0).getBootstrapServers(), is("node-0.my-kube:31234,node-1.my-kube:31234,node-3.my-kube:31234"));
             assertThat(status.getListeners().get(0).getAddresses().size(), is(3));
 
@@ -704,6 +707,7 @@ public class KafkaReconcilerStatusTest {
             // Check listener status
             assertThat(status.getListeners().size(), is(1));
             assertThat(status.getListeners().get(0).getName(), is("external"));
+            assertThat(status.getListeners().get(0).getType(), is("external"));
             assertThat(status.getListeners().get(0).getBootstrapServers(), is("50.35.18.119:31234"));
             assertThat(status.getListeners().get(0).getAddresses().size(), is(1));
             assertThat(status.getListeners().get(0).getAddresses().get(0).getPort(), is(31234));
@@ -792,6 +796,7 @@ public class KafkaReconcilerStatusTest {
             // Check listener status
             assertThat(status.getListeners().size(), is(1));
             assertThat(status.getListeners().get(0).getName(), is("external"));
+            assertThat(status.getListeners().get(0).getType(), is("external"));
             assertThat(status.getListeners().get(0).getBootstrapServers(), is(nullValue()));
             assertThat(status.getListeners().get(0).getAddresses(), is(List.of()));
 

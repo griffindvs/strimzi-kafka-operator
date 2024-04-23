@@ -6,7 +6,6 @@ package io.strimzi.api.kafka.model.status;
 
 import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.annotation.JsonPropertyOrder;
-import io.strimzi.api.annotations.DeprecatedProperty;
 import io.strimzi.api.kafka.model.Constants;
 import io.strimzi.api.kafka.model.UnknownPropertyPreserving;
 import io.strimzi.crdgenerator.annotations.Description;
@@ -34,23 +33,21 @@ import static java.util.Collections.emptyMap;
 public class ListenerStatus implements UnknownPropertyPreserving, Serializable {
     private static final long serialVersionUID = 1L;
 
-    private String type;
     private String name;
     private List<ListenerAddress> addresses;
     private String bootstrapServers;
     private List<String> certificates;
     private Map<String, Object> additionalProperties;
 
-    @Deprecated
-    @DeprecatedProperty(description = "The `type` property is not used anymore. Use the `name` property with the same value.")
-    @Description("The name of the listener.")
+    @Description("*The `type` property has been deprecated, and should now be configured using `name`.* " +
+            "The name of the listener.")
     public String getType() {
-        return type;
+        return name;
     }
 
     @Deprecated
-    public void setType(String type) {
-        this.type = type;
+    public void setType(String name) {
+        this.name = name;
     }
 
     @Description("The name of the listener.")

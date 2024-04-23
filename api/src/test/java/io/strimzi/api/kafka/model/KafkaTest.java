@@ -200,6 +200,8 @@ public class KafkaTest extends AbstractCrdTest<Kafka> {
 
         List<ListenerStatus> listeners = model.getStatus().getListeners();
 
+        assertThat(listeners.get(0).getType(), is("plain"));
+        assertThat(listeners.get(1).getType(), is("external"));
         assertThat(listeners.get(0).getName(), is("plain"));
         assertThat(listeners.get(1).getName(), is("external"));
     }

@@ -139,10 +139,12 @@ public class KafkaStatusTest {
             KafkaStatus status = kafkaCaptor.getValue().getStatus();
 
             assertThat(status.getListeners().size(), is(2));
+            assertThat(status.getListeners().get(0).getType(), is("plain"));
             assertThat(status.getListeners().get(0).getName(), is("plain"));
             assertThat(status.getListeners().get(0).getAddresses().get(0).getHost(), is("my-service.my-namespace.svc"));
             assertThat(status.getListeners().get(0).getAddresses().get(0).getPort(), is(9092));
             assertThat(status.getListeners().get(0).getBootstrapServers(), is("my-service.my-namespace.svc:9092"));
+            assertThat(status.getListeners().get(1).getType(), is("external"));
             assertThat(status.getListeners().get(1).getName(), is("external"));
             assertThat(status.getListeners().get(1).getAddresses().get(0).getHost(), is("my-route-address.domain.tld"));
             assertThat(status.getListeners().get(1).getAddresses().get(0).getPort(), is(443));
@@ -293,6 +295,7 @@ public class KafkaStatusTest {
             KafkaStatus status = kafkaCaptor.getValue().getStatus();
 
             assertThat(status.getListeners().size(), is(1));
+            assertThat(status.getListeners().get(0).getType(), is("plain"));
             assertThat(status.getListeners().get(0).getName(), is("plain"));
             assertThat(status.getListeners().get(0).getAddresses().get(0).getHost(), is("my-service.my-namespace.svc"));
             assertThat(status.getListeners().get(0).getAddresses().get(0).getPort(), is(9092));
@@ -369,6 +372,7 @@ public class KafkaStatusTest {
             KafkaStatus status = kafkaCaptor.getValue().getStatus();
 
             assertThat(status.getListeners().size(), is(1));
+            assertThat(status.getListeners().get(0).getType(), is("plain"));
             assertThat(status.getListeners().get(0).getName(), is("plain"));
             assertThat(status.getListeners().get(0).getAddresses().get(0).getHost(), is("my-service.my-namespace.svc"));
             assertThat(status.getListeners().get(0).getAddresses().get(0).getPort(), is(9092));
