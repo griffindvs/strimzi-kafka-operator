@@ -132,15 +132,8 @@ status:
           
           -----END CERTIFICATE-----
       name: external4
-<<<<<<< HEAD
-  observedGeneration: 3 # <6>
-  operatorLastSuccessfulVersion: {ProductVersion} # <7>
-||||||| f3992184c (Do not set Kafka.KafkaStatus.ListenerStatus.type property (#9061))
-  observedGeneration: 3 # <5>
-=======
       type: external4
   observedGeneration: 3 # <5>
->>>>>>> parent of f3992184c (Do not set Kafka.KafkaStatus.ListenerStatus.type property (#9061))
 ----
 <1> The Kafka cluster ID.
 <2> Status `conditions` describe the current state of the Kafka cluster.

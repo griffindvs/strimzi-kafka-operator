@@ -1664,13 +1664,7 @@ Used in: xref:type-KafkaStatus-{context}[`KafkaStatus`]
 [options="header"]
 |====
 |Property                 |Description
-<<<<<<< HEAD
-|type              1.2+<.<a|**The `type` property has been deprecated.** The `type` property is not used anymore. Use the `name` property with the same value. The name of the listener.
-||||||| f3992184c (Do not set Kafka.KafkaStatus.ListenerStatus.type property (#9061))
-|type              1.2+<.<a|**The `type` property has been deprecated.** The `type` property is deprecated and not used anymore. *The `type` property is deprecated and not used anymore. Use the `name` property.* The name of the listener.
-=======
 |type              1.2+<.<a|*The `type` property has been deprecated, and should now be configured using `name`.* The name of the listener.
->>>>>>> parent of f3992184c (Do not set Kafka.KafkaStatus.ListenerStatus.type property (#9061))
 |string
 |name              1.2+<.<a|The name of the listener.
 |string
