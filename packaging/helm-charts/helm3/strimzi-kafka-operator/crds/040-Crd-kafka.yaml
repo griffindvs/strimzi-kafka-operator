@@ -6278,13 +6278,7 @@ spec:
                     properties:
                       type:
                         type: string
-<<<<<<< HEAD
                         description: The name of the listener.
-||||||| f3992184c (Do not set Kafka.KafkaStatus.ListenerStatus.type property (#9061))
-                        description: '*The `type` property is deprecated and not used anymore. Use the `name` property.* The name of the listener.'
-=======
-                        description: "*The `type` property has been deprecated, and should now be configured using `name`.* The name of the listener."
->>>>>>> parent of f3992184c (Do not set Kafka.KafkaStatus.ListenerStatus.type property (#9061))
                       name:
                         type: string
                         description: The name of the listener.
