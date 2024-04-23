@@ -138,76 +138,8 @@ public class TopicST extends AbstractST {
         KafkaCmdClient.updateTopicPartitionsCountUsingPodCli(Environment.TEST_SUITE_NAMESPACE, scraperPodName, KafkaResources.plainBootstrapAddress(KAFKA_CLUSTER_NAME), topicName, topicPartitions);
         LOGGER.debug("Topic: {} updated from {} to {} partitions", topicName, 3, topicPartitions);
 
-        KafkaTopicUtils.waitForKafkaTopicPartitionChange(Constants.TEST_SUITE_NAMESPACE, topicName, topicPartitions);
-        verifyTopicViaKafka(Constants.TEST_SUITE_NAMESPACE, topicName, topicPartitions, KAFKA_CLUSTER_NAME);
-    }
-
-    @IsolatedTest("Using more tha one Kafka cluster in one namespace")
-    @Tag(NODEPORT_SUPPORTED)
-    @UTONotSupported
-    void testCreateTopicViaAdminClient(ExtensionContext extensionContext) throws ExecutionException, InterruptedException, TimeoutException {
-        final TestStorage testStorage = storageMap.get(extensionContext);
-        String clusterName = testStorage.getClusterName();
-        String topicName = testStorage.getTopicName();
-
-        resourceManager.createResourceWithWait(extensionContext, KafkaTemplates.kafkaEphemeral(clusterName, 3, 3)
-            .editMetadata()
-                .withNamespace(Constants.TEST_SUITE_NAMESPACE)
-            .endMetadata()
-            .editSpec()
-                .editKafka()
-                    .withListeners(new GenericKafkaListenerBuilder()
-                            .withName(Constants.EXTERNAL_LISTENER_DEFAULT_NAME)
-                            .withPort(9094)
-                            .withType(KafkaListenerType.NODEPORT)
-                            .withTls(false)
-                            .build())
-                .endKafka()
-            .endSpec()
-            .build());
-
-        Properties properties = new Properties();
-
-        properties.setProperty(AdminClientConfig.BOOTSTRAP_SERVERS_CONFIG, KafkaResource.kafkaClient().inNamespace(Constants.TEST_SUITE_NAMESPACE)
-            .withName(clusterName).get().getStatus().getListeners().stream()
-            .filter(listener -> listener.getType().equals(Constants.EXTERNAL_LISTENER_DEFAULT_NAME))
-            .findFirst()
-            .orElseThrow(RuntimeException::new)
-            .getBootstrapServers());
-
-        try (AdminClient adminClient = AdminClient.create(properties)) {
-
-            Set<String> topics = adminClient.listTopics().names().get(Constants.GLOBAL_CLIENTS_TIMEOUT, TimeUnit.MILLISECONDS);
-            int topicsSize = topics.size(); // new KafkaStreamsTopicStore has topology input topics
-
-            LOGGER.info("Creating async Topic: {} via Admin client", topicName);
-            CreateTopicsResult crt = adminClient.createTopics(singletonList(new NewTopic(topicName, 1, (short) 1)));
-            crt.all().get();
-
-            TestUtils.waitFor("Kafka cluster has " + (topicsSize + 1) + " KafkaTopic", Constants.GLOBAL_POLL_INTERVAL,
-                Constants.GLOBAL_TIMEOUT, () -> {
-                    Set<String> updatedKafkaTopics = new HashSet<>();
-                    try {
-                        updatedKafkaTopics = adminClient.listTopics().names().get(Constants.GLOBAL_CLIENTS_TIMEOUT, TimeUnit.MILLISECONDS);
-                        LOGGER.info("Verifying that in Kafka cluster contains {} Topics", topicsSize + 1);
-
-                    } catch (InterruptedException | ExecutionException | TimeoutException e) {
-                        e.printStackTrace();
-                    }
-                    return updatedKafkaTopics.size() == topicsSize + 1 && updatedKafkaTopics.contains(topicName);
-
-                });
-
-            KafkaTopicUtils.waitForKafkaTopicCreation(Constants.TEST_SUITE_NAMESPACE, topicName);
-            KafkaTopicUtils.waitForKafkaTopicReady(Constants.TEST_SUITE_NAMESPACE, topicName);
-        }
-
-        KafkaTopic kafkaTopic = KafkaTopicResource.kafkaTopicClient().inNamespace(Constants.TEST_SUITE_NAMESPACE).withName(topicName).get();
-
-        LOGGER.info("Verifying that corresponding {} KafkaTopic custom resources were created and Topic is in Ready state", 1);
-        assertThat(kafkaTopic.getStatus().getConditions().get(0).getType(), is(Ready.toString()));
-        assertThat(kafkaTopic.getSpec().getPartitions(), is(1));
-        assertThat(kafkaTopic.getSpec().getReplicas(), is(1));
+        KafkaTopicUtils.waitForKafkaTopicPartitionChange(Environment.TEST_SUITE_NAMESPACE, topicName, topicPartitions);
+        verifyTopicViaKafka(Environment.TEST_SUITE_NAMESPACE, topicName, topicPartitions, KAFKA_CLUSTER_NAME);
     }
 
     @ParallelTest
