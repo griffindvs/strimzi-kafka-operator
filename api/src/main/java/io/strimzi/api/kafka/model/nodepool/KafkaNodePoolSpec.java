@@ -29,13 +29,14 @@ import java.util.List;
         builderPackage = Constants.FABRIC8_KUBERNETES_API
 )
 @JsonInclude(JsonInclude.Include.NON_NULL)
-@JsonPropertyOrder({"replicas", "storage", "roles", "resources", "jvmOptions", "template"})
+@JsonPropertyOrder({"replicas", "storage", "roles", "rackId", "resources", "jvmOptions", "template"})
 @EqualsAndHashCode(callSuper = true)
 @ToString(callSuper = true)
 public class KafkaNodePoolSpec extends Spec {
     private int replicas;
     private Storage storage;
     private List<ProcessRoles> roles;
+    private String rackId;
     private ResourceRequirements resources;
     private JvmOptions jvmOptions;
     private KafkaNodePoolTemplate template;
@@ -71,6 +72,16 @@ public class KafkaNodePoolSpec extends Spec {
 
     public void setRoles(List<ProcessRoles> roles) {
         this.roles = roles;
+    }
+
+    @JsonInclude(JsonInclude.Include.NON_NULL)
+    @Description("The rack ID configured for brokers within the node pool.")
+    public String getRackId() {
+        return rackId;
+    }
+
+    public void setRackId(String rackId) {
+        this.rackId = rackId;
     }
 
     @JsonInclude(JsonInclude.Include.NON_NULL)

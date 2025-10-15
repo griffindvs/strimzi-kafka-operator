@@ -4640,6 +4640,9 @@ Used in: xref:type-KafkaNodePool-{context}[`KafkaNodePool`]
 |roles
 |string (one or more of [controller, broker]) array
 |The roles assigned to the node pool. Supported values are `broker` and `controller`. This property is required.
+|rackId
+|string
+|The rack ID configured for brokers within the node pool.
 |resources
 |https://kubernetes.io/docs/reference/generated/kubernetes-api/v1.27/#resourcerequirements-v1-core[ResourceRequirements]
 |CPU and memory resources to reserve.

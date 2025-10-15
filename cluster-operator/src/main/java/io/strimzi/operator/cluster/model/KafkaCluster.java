@@ -1843,7 +1843,7 @@ public class KafkaCluster extends AbstractModel implements SupportsMetrics, Supp
      */
     private String generatePerBrokerConfiguration(NodeRef node, KafkaPool pool, Map<Integer, Map<String, String>> advertisedHostnames, Map<Integer, Map<String, String>> advertisedPorts)   {
         return new KafkaBrokerConfigurationBuilder(reconciliation, node)
-                .withRackId(rack)
+                .withRackId(rack, pool.rackId)
                 .withKRaft(cluster, namespace, nodes())
                 .withKRaftMetadataLogDir(VolumeUtils.kraftMetadataPath(pool.storage))
                 .withLogDirs(VolumeUtils.createVolumeMounts(pool.storage, false))

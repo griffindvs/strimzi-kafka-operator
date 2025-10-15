@@ -60,6 +60,11 @@ public class KafkaPool extends AbstractModel {
     protected Set<ProcessRoles> processRoles = null;
 
     /**
+     * Optional custom rack ID configuration
+     */
+    protected String rackId;
+
+    /**
      * Warning conditions generated from the Custom Resource
      */
     protected List<Condition> warningConditions = new ArrayList<>(0);
@@ -151,6 +156,7 @@ public class KafkaPool extends AbstractModel {
         KafkaPool result = new KafkaPool(reconciliation, kafka, pool, componentName(kafka, pool), ownerReference, idAssignment, sharedEnvironmentProvider);
 
         result.gcLoggingEnabled = isGcLoggingEnabled(kafka, pool);
+        result.rackId = pool.getSpec().getRackId();
         result.jvmOptions = pool.getSpec().getJvmOptions() != null ? pool.getSpec().getJvmOptions() : kafka.getSpec().getKafka().getJvmOptions();
         result.resources = pool.getSpec().getResources() != null ? pool.getSpec().getResources() : kafka.getSpec().getKafka().getResources();
         result.processRoles = new HashSet<>(pool.getSpec().getRoles());
