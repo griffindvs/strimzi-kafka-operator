@@ -243,7 +243,7 @@ public class KafkaBrokerConfigurationBuilderTest {
     @Test
     public void testNoRackAwareness()  {
         String configuration = new KafkaBrokerConfigurationBuilder(Reconciliation.DUMMY_RECONCILIATION, NODE_REF)
-                .withRackId(null, "")
+                .withRackId(null)
                 .build();
 
         assertThat(configuration, isEquivalent("node.id=2"));
@@ -252,7 +252,7 @@ public class KafkaBrokerConfigurationBuilderTest {
     @Test
     public void testRackIdInKRaftBrokers()  {
         String configuration = new KafkaBrokerConfigurationBuilder(Reconciliation.DUMMY_RECONCILIATION, NODE_REF)
-                .withRackId(new Rack("failure-domain.kubernetes.io/zone"), "")
+                .withRackId(new Rack("failure-domain.kubernetes.io/zone"))
                 .build();
 
         assertThat(configuration, isEquivalent("node.id=2",
@@ -262,7 +262,7 @@ public class KafkaBrokerConfigurationBuilderTest {
     @Test
     public void testRackIdInKRaftMixedNode()  {
         String configuration = new KafkaBrokerConfigurationBuilder(Reconciliation.DUMMY_RECONCILIATION, new NodeRef("my-cluster-kafka-1", 1, "kafka", true, true))
-                .withRackId(new Rack("failure-domain.kubernetes.io/zone"), "")
+                .withRackId(new Rack("failure-domain.kubernetes.io/zone"))
                 .build();
 
         assertThat(configuration, isEquivalent("node.id=1",
@@ -272,7 +272,7 @@ public class KafkaBrokerConfigurationBuilderTest {
     @Test
     public void testRackIdInKRaftControllers()  {
         String configuration = new KafkaBrokerConfigurationBuilder(Reconciliation.DUMMY_RECONCILIATION, new NodeRef("my-cluster-controllers-1", 1, "controllers", true, false))
-                .withRackId(new Rack("failure-domain.kubernetes.io/zone"), "")
+                .withRackId(new Rack("failure-domain.kubernetes.io/zone"))
                 .build();
 
         assertThat(configuration, isEquivalent("node.id=1"));

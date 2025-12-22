@@ -303,7 +303,7 @@ public class KafkaBridgeCluster extends AbstractModel implements SupportsLogging
             CertUtils.createTrustedCertificatesVolumes(volumeList, tls.getTrustedCertificates(), isOpenShift);
         }
 
-        if (rack != null) {
+        if (rack.useRackInitContainer()) {
             volumeList.add(VolumeUtils.createEmptyDirVolume(INIT_VOLUME_NAME, "1Mi", "Memory"));
         }
 
@@ -324,7 +324,7 @@ public class KafkaBridgeCluster extends AbstractModel implements SupportsLogging
             CertUtils.createTrustedCertificatesVolumeMounts(volumeMountList, tls.getTrustedCertificates(), TLS_CERTS_BASE_VOLUME_MOUNT);
         }
 
-        if (rack != null) {
+        if (rack.useRackInitContainer()) {
             volumeMountList.add(VolumeUtils.createVolumeMount(INIT_VOLUME_NAME, INIT_VOLUME_MOUNT));
         }
 
@@ -381,7 +381,7 @@ public class KafkaBridgeCluster extends AbstractModel implements SupportsLogging
     }
 
     private Container createInitContainer(ImagePullPolicy imagePullPolicy) {
-        if (rack != null) {
+        if (rack.useRackInitContainer()) {
             return ContainerUtils.createContainer(
                     INIT_NAME,
                     initImage,
@@ -516,7 +516,7 @@ public class KafkaBridgeCluster extends AbstractModel implements SupportsLogging
     protected Affinity getMergedAffinity() {
         Affinity userAffinity = templatePod != null && templatePod.getAffinity() != null ? templatePod.getAffinity() : new Affinity();
         AffinityBuilder builder = new AffinityBuilder(userAffinity);
-        if (rack != null) {
+        if (rack.useRackInitContainer()) {
             builder = ModelUtils.populateAffinityBuilderWithRackLabelSelector(builder, userAffinity, rack.getTopologyKey());
         }
         return builder.build();
@@ -529,7 +529,7 @@ public class KafkaBridgeCluster extends AbstractModel implements SupportsLogging
      * @return The cluster role binding.
      */
     public ClusterRoleBinding generateClusterRoleBinding() {
-        if (rack != null) {
+        if (rack.useRackInitContainer()) {
             Subject subject = new SubjectBuilder()
                     .withKind("ServiceAccount")
                     .withName(componentName)

@@ -174,9 +174,6 @@ spec:
                   - controller
                   - broker
                 description: The roles assigned to the node pool. Supported values are `broker` and `controller`. This property is required.
-              rackId:
-                type: string
-                description: The rack ID configured for brokers within the node pool.
               resources:
                 type: object
                 properties:

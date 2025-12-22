@@ -445,12 +445,16 @@ spec:
                 rack:
                   type: object
                   properties:
+                    type:
+                      type: string
+                      enum:
+                        - node-label
+                        - envvar
+                      description: "Type of the rack configuration. The supported types are as follows: \n\n* `node-label` type configures the rack using the node label with the provided topologyKey.\n* `envvar` type configures the rack using the `STRIMZI_RACK` environment variable.\n"
                     topologyKey:
                       type: string
                       example: topology.kubernetes.io/zone
                       description: "A key that matches labels assigned to the Kubernetes cluster nodes. The value of the label is used to set a broker's `broker.rack` config, and the `client.rack` config for Kafka Connect or MirrorMaker 2."
-                  required:
-                    - topologyKey
                   description: Configuration of the node label which will be used as the client.rack consumer configuration.
                 enableMetrics:
                   type: boolean

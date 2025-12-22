@@ -452,7 +452,7 @@ public class KafkaConnectCluster extends AbstractModel implements SupportsMetric
         volumeList.add(VolumeUtils.createTempDirVolume(templatePod));
         volumeList.add(VolumeUtils.createConfigMapVolume(KAFKA_CONNECT_CONFIG_VOLUME_NAME, connectConfigMapName));
 
-        if (rack != null) {
+        if (rack.useRackInitContainer()) {
             volumeList.add(VolumeUtils.createEmptyDirVolume(INIT_VOLUME_NAME, "1Mi", "Memory"));
         }
 
@@ -540,7 +540,7 @@ public class KafkaConnectCluster extends AbstractModel implements SupportsMetric
         volumeMountList.add(VolumeUtils.createTempDirVolumeMount());
         volumeMountList.add(VolumeUtils.createVolumeMount(KAFKA_CONNECT_CONFIG_VOLUME_NAME, KAFKA_CONNECT_CONFIG_VOLUME_MOUNT));
 
-        if (rack != null) {
+        if (rack.useRackInitContainer()) {
             volumeMountList.add(VolumeUtils.createVolumeMount(INIT_VOLUME_NAME, INIT_VOLUME_MOUNT));
         }
 
@@ -610,7 +610,7 @@ public class KafkaConnectCluster extends AbstractModel implements SupportsMetric
     protected Affinity getMergedAffinity() {
         Affinity userAffinity = templatePod != null && templatePod.getAffinity() != null ? templatePod.getAffinity() : new Affinity();
         AffinityBuilder builder = new AffinityBuilder(userAffinity);
-        if (rack != null) {
+        if (rack.useRackInitContainer()) {
             builder = ModelUtils.populateAffinityBuilderWithRackLabelSelector(builder, userAffinity, rack.getTopologyKey());
         }
         return builder.build();
@@ -670,7 +670,7 @@ public class KafkaConnectCluster extends AbstractModel implements SupportsMetric
     }
 
     /* test */ Container createInitContainer(ImagePullPolicy imagePullPolicy) {
-        if (rack != null) {
+        if (rack.useRackInitContainer()) {
             return ContainerUtils.createContainer(
                     INIT_NAME,
                     initImage,
@@ -920,7 +920,7 @@ public class KafkaConnectCluster extends AbstractModel implements SupportsMetric
      * @return The cluster role binding.
      */
     public ClusterRoleBinding generateClusterRoleBinding() {
-        if (rack != null) {
+        if (rack.useRackInitContainer()) {
             Subject subject = new SubjectBuilder()
                     .withKind("ServiceAccount")
                     .withName(componentName)

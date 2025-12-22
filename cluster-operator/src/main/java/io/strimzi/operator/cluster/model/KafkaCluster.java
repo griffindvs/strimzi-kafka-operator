@@ -44,6 +44,7 @@ import io.fabric8.openshift.api.model.Route;
 import io.fabric8.openshift.api.model.RouteBuilder;
 import io.strimzi.api.kafka.model.common.Condition;
 import io.strimzi.api.kafka.model.common.Rack;
+import io.strimzi.api.kafka.model.common.RackType;
 import io.strimzi.api.kafka.model.common.metrics.JmxPrometheusExporterMetrics;
 import io.strimzi.api.kafka.model.common.metrics.StrimziMetricsReporter;
 import io.strimzi.api.kafka.model.common.template.ContainerTemplate;
@@ -1369,7 +1370,7 @@ public class KafkaCluster extends AbstractModel implements SupportsMetrics, Supp
         // Some volumes are used only on nodes with broker role and are not needed on controller-only nodes
         if (node.broker()) {
             // Volume for sharing data with init container for rack awareness and node port listeners
-            if (rack != null || isExposedWithNodePort()) {
+            if (rack.useRackInitContainer() || isExposedWithNodePort()) {
                 volumeList.add(VolumeUtils.createEmptyDirVolume(INIT_VOLUME_NAME, "1Mi", "Memory"));
             }
 
@@ -1439,7 +1440,7 @@ public class KafkaCluster extends AbstractModel implements SupportsMetrics, Supp
         // Some volumes are used only on nodes with broker role and are not needed on controller-only nodes
         if (isBroker)   {
             // Volume for sharing data with init container for rack awareness and node port listeners
-            if (rack != null || isExposedWithNodePort()) {
+            if (rack.useRackInitContainer() || isExposedWithNodePort()) {
                 volumeMountList.add(VolumeUtils.createVolumeMount(INIT_VOLUME_NAME, INIT_VOLUME_MOUNT));
             }
 
@@ -1489,7 +1490,7 @@ public class KafkaCluster extends AbstractModel implements SupportsMetrics, Supp
     private Affinity getMergedAffinity(KafkaPool pool) {
         Affinity userAffinity = pool.templatePod != null && pool.templatePod.getAffinity() != null ? pool.templatePod.getAffinity() : new Affinity();
         AffinityBuilder builder = new AffinityBuilder(userAffinity);
-        if (rack != null) {
+        if (rack.getType() == RackType.NODE_LABEL) {
             // If there's a rack config, we need to add a podAntiAffinity to spread the brokers among the racks
             // We add the affinity even for controller only nodes as we prefer them to be spread even if they don't directly use rack awareness
             builder = builder
@@ -1516,7 +1517,7 @@ public class KafkaCluster extends AbstractModel implements SupportsMetrics, Supp
         List<EnvVar> varList = new ArrayList<>();
         varList.add(ContainerUtils.createEnvVarFromFieldRef(ENV_VAR_KAFKA_INIT_NODE_NAME, "spec.nodeName"));
 
-        if (rack != null) {
+        if (rack.useRackInitContainer()) {
             varList.add(ContainerUtils.createEnvVar(ENV_VAR_KAFKA_INIT_RACK_TOPOLOGY_KEY, rack.getTopologyKey()));
         }
 
@@ -1534,7 +1535,7 @@ public class KafkaCluster extends AbstractModel implements SupportsMetrics, Supp
 
     private Container createInitContainer(ImagePullPolicy imagePullPolicy, KafkaPool pool) {
         if (pool.isBroker()
-                && (rack != null || !ListenersUtils.nodePortListeners(listeners).isEmpty())) {
+                && (rack.useRackInitContainer() || !ListenersUtils.nodePortListeners(listeners).isEmpty())) {
             return ContainerUtils.createContainer(
                     INIT_NAME,
                     initImage,
@@ -1644,7 +1645,7 @@ public class KafkaCluster extends AbstractModel implements SupportsMetrics, Supp
      * @return The cluster role binding.
      */
     public ClusterRoleBinding generateClusterRoleBinding(String assemblyNamespace) {
-        if (rack != null || isExposedWithNodePort()) {
+        if (rack.useRackInitContainer() || isExposedWithNodePort()) {
             Subject subject = new SubjectBuilder()
                     .withKind("ServiceAccount")
                     .withName(componentName)
@@ -1843,7 +1844,7 @@ public class KafkaCluster extends AbstractModel implements SupportsMetrics, Supp
      */
     private String generatePerBrokerConfiguration(NodeRef node, KafkaPool pool, Map<Integer, Map<String, String>> advertisedHostnames, Map<Integer, Map<String, String>> advertisedPorts)   {
         return new KafkaBrokerConfigurationBuilder(reconciliation, node)
-                .withRackId(rack, pool.rackId)
+                .withRackId(rack)
                 .withKRaft(cluster, namespace, nodes())
                 .withKRaftMetadataLogDir(VolumeUtils.kraftMetadataPath(pool.storage))
                 .withLogDirs(VolumeUtils.createVolumeMounts(pool.storage, false))

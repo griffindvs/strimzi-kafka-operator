@@ -923,6 +923,13 @@ include::../api/io.strimzi.api.kafka.model.common.Rack.adoc[leveloffset=+1]
 [cols="2,2,3a",options="header"]
 |====
 |Property |Property type |Description
+|type
+|string (one of [envvar, node-label])
+|Type of the rack configuration. The supported types are as follows: 
+
+* `node-label` type configures the rack using the node label with the provided topologyKey.
+* `envvar` type configures the rack using the `STRIMZI_RACK` environment variable.
+
 |topologyKey
 |string
 |A key that matches labels assigned to the Kubernetes cluster nodes. The value of the label is used to set a broker's `broker.rack` config, and the `client.rack` config for Kafka Connect or MirrorMaker 2.
@@ -4640,9 +4647,6 @@ Used in: xref:type-KafkaNodePool-{context}[`KafkaNodePool`]
 |roles
 |string (one or more of [controller, broker]) array
 |The roles assigned to the node pool. Supported values are `broker` and `controller`. This property is required.
-|rackId
-|string
-|The rack ID configured for brokers within the node pool.
 |resources
 |https://kubernetes.io/docs/reference/generated/kubernetes-api/v1.27/#resourcerequirements-v1-core[ResourceRequirements]
 |CPU and memory resources to reserve.
